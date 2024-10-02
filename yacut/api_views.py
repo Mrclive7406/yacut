@@ -1,5 +1,4 @@
 from flask import jsonify, request
-import re
 from http import HTTPStatus
 from . import app, db
 from settings import (API_POST_URL, API_GET_URL,
@@ -25,7 +24,8 @@ def create_short_link():
         custom_id = get_unique_short_id()
         data.update({CUSTOM_ID: custom_id})
     if not CUSTOM_REGEXP_ID_MODEL.match(custom_id):
-        raise InvalidAPIUsage('Указано недопустимое имя для короткой ссылки', 400)
+        raise InvalidAPIUsage('Указано недопустимое имя'
+                              'для короткой ссылки', HTTPStatus.BAD_REQUEST)
     short_id_validater(custom_id)
     url.from_dict(data)
     db.session.add(url)
