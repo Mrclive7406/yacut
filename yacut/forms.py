@@ -4,7 +4,7 @@ from wtforms import StringField, SubmitField, URLField
 from wtforms.validators import (DataRequired, Optional, Regexp, Length, URL)
 
 from settings import (CUSTOM_REGEXP, MAX_ORIGINAL_LINK_LENGHT,
-                      MIN_LENGTH_CUSTOM, CUSTOM_MIDDL_LENGTH)
+                      MIN_LENGTH_CUSTOM_ID, CUSTOM_ID_MIDDL_LENGTH)
 
 
 class UrlForm(FlaskForm):
@@ -12,14 +12,14 @@ class UrlForm(FlaskForm):
         'Длинная ссылка',
         validators=[
             DataRequired(message='Обязательное поле'),
-            Length(MIN_LENGTH_CUSTOM, MAX_ORIGINAL_LINK_LENGHT,
+            Length(MIN_LENGTH_CUSTOM_ID, MAX_ORIGINAL_LINK_LENGHT,
                    message='Длинна поля от 1 до 256 символов'),
             URL(message='Некорректная ссылка')
         ])
     custom_id = StringField(
         'Ваш вариант короткой ссылки',
         validators=[
-            Length(MIN_LENGTH_CUSTOM, CUSTOM_MIDDL_LENGTH,
+            Length(MIN_LENGTH_CUSTOM_ID, CUSTOM_ID_MIDDL_LENGTH,
                    message='Длинна поля от 1 до 16 символов'),
             Optional(),
             Regexp(

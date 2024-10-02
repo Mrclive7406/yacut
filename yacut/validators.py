@@ -3,7 +3,7 @@ from .models import URLMap
 import random
 import re
 from settings import (URL, MAX_GENERATED_LENGTH,
-                      CUSTOM_REGEXP, CUSTOM_MIDDL_LENGTH)
+                      CUSTOM_REGEXP, CUSTOM_ID_MIDDL_LENGTH)
 from .error_handlers import InvalidAPIUsage
 from string import ascii_letters, digits
 from http import HTTPStatus
@@ -35,7 +35,7 @@ def validation_data(data):
 
 def short_id_validater(short_id):
     if not re.search(CUSTOM_REGEXP,
-                     short_id) or len(short_id) > CUSTOM_MIDDL_LENGTH:
+                     short_id) or len(short_id) > CUSTOM_ID_MIDDL_LENGTH:
         raise InvalidAPIUsage('Указано недопустимое имя для короткой ссылки',
                               HTTPStatus.BAD_REQUEST)
     if URLMap.query.filter_by(short=short_id).first():
