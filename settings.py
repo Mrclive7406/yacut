@@ -1,25 +1,18 @@
 import os
 import re
+from string import ascii_letters, digits
 
-MIN_LENGTH_CUSTOM = 1
-CUSTOM_MIDDL_LENGTH = 16
-MAX_ORIGINAL_LINK_LENGHT = 256
+
+MIDDL_LENGTH = 16
+MAX_LENGHT = 2048
 MAX_GENERATED_LENGTH = 6
-CUSTOM_REGEXP = '^[a-zA-Z0-9]*'
-CUSTOM_REGE_ID = fr"[a-zA-Z0-9]{{{MIN_LENGTH_CUSTOM},{CUSTOM_MIDDL_LENGTH}}}$"
+CUSTOM_REGEXP = '[a-zA-Z0-9]'
+CUSTOM_REGE_ID = fr"{CUSTOM_REGEXP}{{1,{MIDDL_LENGTH}}}$"
 CUSTOM_REGEXP_ID_MODEL = re.compile(CUSTOM_REGE_ID)
-URL = 'url'
-CUSTOM_ID = 'custom_id'
-MAIN_PAGE_TEMPLATE = 'index.html'
-TEMPLATE_404 = 'core/404.html'
-TEMPLATE_500 = 'core/500.html'
-MAIN_URL = '/'
-API_GET_URL = '/api/id/<string:url_short>/'
-API_POST_URL = '/api/id/'
-STRING_URL_SHORTS = '/<string:url_short>'
+GET_SHORT_URL = 'get_short_url'
+LATTER_AND_DIGITS = ascii_letters + digits
 
 
 class Config(object):
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///db.sqlite3'
-    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URI')
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URI', 'sqlite:///db.sqlite3')
     SECRET_KEY = os.getenv('SECRET_KEY')

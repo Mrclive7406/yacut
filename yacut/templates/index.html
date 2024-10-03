@@ -15,20 +15,16 @@
             {{ form.csrf_token }}
             {{ form.original_link(class="form-control form-control-lg py-3 mb-3", placeholder=form.original_link.label.text) }}
             <p>
-              {% if form.original_link.errors %}
                 {% for error in form.original_link.errors %}
                   <span style="color: red">{{ error }}</span>
                 {% endfor %}
-              {% endif %}
             </p>
             <p></p>
             {{ form.custom_id(class="form-control form-control-lg py-3 mb-3", placeholder=form.custom_id.label.text) }}
             <p>
-              {% if form.custom_id.errors %}
                 {% for error in form.custom_id.errors %}
                   <span style="color: red">{{ error }}</span>
                 {% endfor %}
-              {% endif %}
             </p>
             <p class="text-center my-4">
               {{ form.submit(class="btn btn-dark") }}
@@ -47,21 +43,15 @@
         <div class="col-sm">
           <p class="text-center">
             {% with messages = get_flashed_messages(category_filter=['error']) %}
-              {% if messages %}
                 {% for message in messages %}
                   {{ message }}
                 {% endfor %}
-              {% endif %}
             {% endwith %}
-            {% with  messages = get_flashed_messages(category_filter=['get_link']) %}
-              {% if messages %}
-                  Ваша новая ссылка готова:
-                {% for message in messages %}
-                  <a href="{{ message }}">{{ message }}</a>
-                {% endfor %}
+           
+            {% if short_url %}
+              Ваша новая ссылка готова: <a href="{{ short_url }}">{{ short_url }}</a>
             {% endif %}
-          {% endwith %}
-          </h5>
+          </p>
           </p>
         </div>
         <div class="col-sm">

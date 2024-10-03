@@ -53,13 +53,6 @@ flask shell
 >>>db.create_all()
 ```
 
-Выполните миграции в базу данных :
-```
-flask db init
-flask db migrate -m "init"
-flask db upgrade
-```
-
 Запуск:
 
 ```
@@ -68,10 +61,10 @@ flask run
 
 Перейдите по url-адресу:
 ```
-http://127.0.0.1:5000/
+[Генерация коротких ссылок](http://127.0.0.1:5000/)
 ```
 
 ## Автор 
-- Колесников Павел 
+- [Колесников Павел ](https://github.com/Mrclive7406)
 # GitHub 
 - [Проект парсинга pep и документации Python](https://github.com/Mrclive7406/yacut)
