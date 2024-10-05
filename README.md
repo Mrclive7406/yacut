@@ -45,12 +45,15 @@ FLASK_ENV=development [или production]
 DATABASE_URI=[идентификатор СУБД в формате: mysql://username:password@server/db. опционально, по умолчанию подключится sqlite3]
 SECRET_KEY=[ваш случайный ключ]
 ```
-Создайте таблицы:
 
 ```
-flask shell
->>>from yacut import db
->>>db.create_all()
+Создайте миграции с помощью команд:
+
+```
+Командой создаём файл сценария миграции:
+flask db migrate
+Чтобы применить изменения к базе данных, выполните команду
+flask db upgrade 
 ```
 
 Запуск:
