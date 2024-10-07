@@ -1,36 +1,33 @@
 import random
-
-from http import HTTPStatus
+import re
 from datetime import datetime
+from http import HTTPStatus
 
 from flask import url_for
 
-from settings import (MAX_LENGHT, MIDDL_LENGTH,
-                      LATTER_AND_DIGITS, MAX_GENERATED_LENGTH, MAX_TRIES,
-                      LATTER_AND_DIGITS)
-from .error_handlers import InvalidAPIUsage
-
+from settings import (ALPHANUMERIC_CHARACTERS, CUSTOM_REGEXP,
+                      GET_SHORT_URL_ENDPOINT_NAME, MAX_CUSTOM_ID_LENGTH,
+                      MAX_GENERATED_ID_LENGTH, MAX_URL_LENGTH, MAX_URL_TRIES)
 from yacut import db
 
+from .error_handlers import InvalidAPIUsage
 
 INVALID_NAME = 'Указано недопустимое имя для короткой ссылки'
+LINK_EXICTS = 'Предложенный вариант короткой ссылки уже существует.'
 
 
 class URLMap(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    original = db.Column(db.String(MAX_LENGHT), nullable=False)
-    short = db.Column(db.String(MIDDL_LENGTH), unique=True,
+    original = db.Column(db.String(MAX_URL_LENGTH), nullable=False)
+    short = db.Column(db.String(MAX_CUSTOM_ID_LENGTH), unique=True,
                       nullable=False)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-
-    def from_dict(self, data):
-        self.original = data.get('url')
-        self.short = data.get('custom_id')
 
     def to_dict(self):
         return {
             'url': self.original,
-            'short_link': url_for('get_short_url', url_short=self.short,
+            'short_link': url_for(GET_SHORT_URL_ENDPOINT_NAME,
+                                  url_short=self.short,
                                   _external=True)
         }
 
@@ -40,9 +37,9 @@ class URLMap(db.Model):
 
     @staticmethod
     def get_unique_short_id():
-        for _ in range(MAX_TRIES):
-            rand_string = ''.join(random.sample(LATTER_AND_DIGITS,
-                                                MAX_GENERATED_LENGTH))
+        for _ in range(MAX_URL_TRIES):
+            rand_string = ''.join(random.sample(ALPHANUMERIC_CHARACTERS,
+                                                MAX_GENERATED_ID_LENGTH))
             if not URLMap.check_unique_short_id(rand_string):
                 return rand_string
 
@@ -52,33 +49,19 @@ class URLMap(db.Model):
 
     @staticmethod
     def save_db(data):
-        #urlmap = URLMap()
-        #custom_id = URLMap.validatator_custom_id(data)
-        #URLMap.short_id_validater(custom_id)
-        #urlmap.from_dict(data)
-        db.session.add(data)
+        custom_id = data.get('custom_id')
+        if not custom_id:
+            custom_id = URLMap.get_unique_short_id()
+            data.update({'custom_id': custom_id})
+        if not re.search(CUSTOM_REGEXP,
+                         custom_id) or len(custom_id) > MAX_CUSTOM_ID_LENGTH:
+            raise InvalidAPIUsage(INVALID_NAME, HTTPStatus.BAD_REQUEST)
+        if URLMap.check_unique_short_id(custom_id):
+            raise InvalidAPIUsage(LINK_EXICTS, HTTPStatus.BAD_REQUEST)
+        urlmap = URLMap(original=data['url'], short=custom_id)
+        db.session.add(urlmap)
         db.session.commit()
-
-    # @staticmethod
-    # def validatator_custom_id(data):
-    #     custom_id = data.get('custom_id')
-    #     if not custom_id or custom_id is None:
-    #         custom_id = URLMap.get_unique_short_id()
-    #         data.update({'custom_id': custom_id})
-    #     if not CUSTOM_REGEXP_ID_MODEL.match(custom_id):
-    #         raise InvalidAPIUsage(INVALID_NAME, HTTPStatus.BAD_REQUEST)
-    #     return custom_id
-
-    # @staticmethod
-    # def short_id_validater(short_id):
-    #     if not re.search(CUSTOM_REGEXP,
-    #                      short_id) or len(short_id) > MIDDL_LENGTH:
-    #         raise InvalidAPIUsage('Указано недопустимое имя для короткой'
-    #                               ' ссылки', HTTPStatus.BAD_REQUEST)
-    #     if URLMap.query.filter_by(short=short_id).first():
-    #         raise InvalidAPIUsage(
-    #             'Предложенный вариант короткой ссылки уже существует.',
-    #             HTTPStatus.BAD_REQUEST)
+        return urlmap
 
     @staticmethod
     def is_short_id_exists(custom_id):
@@ -93,26 +76,14 @@ class URLMap(db.Model):
         return url.original
 
     @staticmethod
-    def create_entry(original, custom_id=None):
-        short = custom_id or URLMap.get_unique_short_id()
-        if URLMap.is_short_id_exists(custom_id):
-            return None
+    def create_entry(original, short=None):
+        if short is None:
+            short = URLMap.get_unique_short_id()
+        if URLMap.is_short_id_exists(short):
+            return None, HTTPStatus.BAD_REQUEST
         link = URLMap(original=original, short=short)
         db.session.add(link)
         db.session.commit()
-        return link
-
-    # @classmethod
-    # def create_from_data(cls, data):
-    #     custom_id = data.get('custom_id') or cls.get_unique_short_id()
-    #     if not CUSTOM_REGEXP.match(custom_id):
-    #         raise InvalidAPIUsage('Некорректное имя для короткой ссылки',
-    #                               HTTPStatus.BAD_REQUEST)
-    #     if cls.check_unique_short_id(custom_id):
-    #         raise InvalidAPIUsage('Вариант короткой ссылки уже существует.',
-    #                               HTTPStatus.BAD_REQUEST)
-
-    #     urlmap = cls(original=data['url'], short=custom_id)
-    #     urlmap.from_dict(data)
-    #     cls.save_db(urlmap)
-    #     return urlmap
+        short_url = url_for('get_short_url',
+                            url_short=short, _external=True)
+        return link, short_url

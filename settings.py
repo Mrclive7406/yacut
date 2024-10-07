@@ -2,13 +2,14 @@ import os
 import re
 from string import ascii_letters, digits
 
-MAX_TRIES = 5
-MIDDL_LENGTH = 16
-MAX_LENGHT = 2048
-MAX_GENERATED_LENGTH = 6
+MAX_URL_TRIES = 5
+MAX_CUSTOM_ID_LENGTH = 16
+MAX_URL_LENGTH = 2048
+MAX_GENERATED_ID_LENGTH = 6
 CUSTOM_REGEXP = r'^[a-zA-Z\d]{1,16}$'
-CUSTOM_REGEXP_ID_MODEL = re.compile(CUSTOM_REGEXP)
-LATTER_AND_DIGITS = ascii_letters + digits
+CUSTOM_ID_REGEXP_COMPILED = re.compile(CUSTOM_REGEXP)
+ALPHANUMERIC_CHARACTERS = ascii_letters + digits
+GET_SHORT_URL_ENDPOINT_NAME = 'get_short_url'
 
 
 class Config(object):

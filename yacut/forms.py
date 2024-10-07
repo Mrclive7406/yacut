@@ -3,9 +3,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, URLField
 from wtforms.validators import URL, DataRequired, Length, Optional, Regexp
 
-from settings import (MIDDL_LENGTH, CUSTOM_REGEXP,
-                      MAX_LENGHT,)
-
+from settings import CUSTOM_REGEXP, MAX_URL_LENGTH, MAX_CUSTOM_ID_LENGTH
 
 LONG_LINK = 'Длинная ссылка'
 REQUIRED_FIELD = 'Обязательное поле'
@@ -20,12 +18,12 @@ SUBMIT = 'Создать'
 class UrlForm(FlaskForm):
     original_link = URLField(LONG_LINK, validators=[DataRequired(
         message=REQUIRED_FIELD),
-        Length(max=MAX_LENGHT, message=ORIGINAL_LENGTH_MESSAGE),
+        Length(max=MAX_URL_LENGTH, message=ORIGINAL_LENGTH_MESSAGE),
         URL(message=INVALID_LINK)])
     custom_id = StringField(
         SHORT_LINK_OPTION,
         validators=[
-            Length(max=MIDDL_LENGTH,
+            Length(max=MAX_CUSTOM_ID_LENGTH,
                    message=CUSTOM_LENGTH_MESSAGE),
             Optional(),
             Regexp(
