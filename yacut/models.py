@@ -5,9 +5,10 @@ from http import HTTPStatus
 
 from flask import url_for
 
-from settings import (ALPHANUMERIC_CHARACTERS, CUSTOM_REGEXP,
-                      GET_SHORT_URL_ENDPOINT_NAME, MAX_CUSTOM_ID_LENGTH,
-                      MAX_GENERATED_ID_LENGTH, MAX_URL_LENGTH, MAX_URL_TRIES)
+from settings import (ALPHANUMERIC_CHARACTERS, SHORT_REGEXP,
+                      GET_SHORT_URL_ENDPOINT_NAME, MAX_SHORT_LENGTH,
+                      MAX_GENERATED_SHORT_LENGTH, MAX_URL_LENGTH,
+                      MAX_URL_TRIES)
 from yacut import db
 
 from .error_handlers import InvalidAPIUsage
@@ -19,7 +20,7 @@ LINK_EXICTS = 'Предложенный вариант короткой ссыл
 class URLMap(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     original = db.Column(db.String(MAX_URL_LENGTH), nullable=False)
-    short = db.Column(db.String(MAX_CUSTOM_ID_LENGTH), unique=True,
+    short = db.Column(db.String(MAX_SHORT_LENGTH), unique=True,
                       nullable=False)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
 
@@ -32,31 +33,37 @@ class URLMap(db.Model):
         }
 
     @staticmethod
-    def check_unique_short_id(short):
+    def unique_short_id(short):
         return URLMap.query.filter_by(short=short).first()
 
     @staticmethod
     def get_unique_short_id():
         for _ in range(MAX_URL_TRIES):
-            rand_string = ''.join(random.sample(ALPHANUMERIC_CHARACTERS,
-                                                MAX_GENERATED_ID_LENGTH))
-            if not URLMap.check_unique_short_id(rand_string):
+            rand_string = ''.join(random.choices(ALPHANUMERIC_CHARACTERS,
+                                                 k=MAX_GENERATED_SHORT_LENGTH))
+            if not URLMap.unique_short_id(rand_string):
                 return rand_string
 
     @staticmethod
-    def find_obj_or_404(url_short):
-        return URLMap.query.filter_by(short=url_short).first_or_404()
+    def get_or_404(short):
+        return URLMap.query.filter_by(short=short).first_or_404()
+
+    def retrieve_obj(item, query):
+        return URLMap.query.filter(item == query)
+
+    def check_short_id(short_id):
+        return URLMap.retrieve_obj(URLMap.short, short_id).first() is None
 
     @staticmethod
-    def save_db(data):
-        custom_id = data.get('custom_id')
-        if not custom_id:
+    def save_db(data, custom_id=None):
+        if 'custom_id' in data:
+            custom_id = data.get('custom_id')
+        if custom_id == '' or custom_id is None:
             custom_id = URLMap.get_unique_short_id()
-            data.update({'custom_id': custom_id})
-        if not re.search(CUSTOM_REGEXP,
-                         custom_id) or len(custom_id) > MAX_CUSTOM_ID_LENGTH:
+            data['custom_id'] = custom_id
+        if not re.match(SHORT_REGEXP, custom_id):
             raise InvalidAPIUsage(INVALID_NAME, HTTPStatus.BAD_REQUEST)
-        if URLMap.check_unique_short_id(custom_id):
+        if not URLMap.check_short_id(custom_id):
             raise InvalidAPIUsage(LINK_EXICTS, HTTPStatus.BAD_REQUEST)
         urlmap = URLMap(original=data['url'], short=custom_id)
         db.session.add(urlmap)
@@ -64,12 +71,8 @@ class URLMap(db.Model):
         return urlmap
 
     @staticmethod
-    def is_short_id_exists(custom_id):
-        return URLMap.check_unique_short_id(custom_id)
-
-    @staticmethod
-    def validation_for_404(url_short):
-        url = URLMap.query.filter_by(short=url_short).first()
+    def verify_record_for_404(short):
+        url = URLMap.unique_short_id(short)
         if not url:
             raise InvalidAPIUsage('Указанный id не найден',
                                   HTTPStatus.NOT_FOUND)
@@ -77,13 +80,5 @@ class URLMap(db.Model):
 
     @staticmethod
     def create_entry(original, short=None):
-        if short is None:
-            short = URLMap.get_unique_short_id()
-        if URLMap.is_short_id_exists(short):
-            return None, HTTPStatus.BAD_REQUEST
-        link = URLMap(original=original, short=short)
-        db.session.add(link)
-        db.session.commit()
-        short_url = url_for('get_short_url',
-                            url_short=short, _external=True)
-        return link, short_url
+        urlmap = URLMap.save_db(data={'url': original, 'custom_id': short})
+        return urlmap

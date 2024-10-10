@@ -12,7 +12,7 @@ INVALID_NAME = 'Указано недопустимое имя для корот
 @app.route('/api/id/<string:short>/', methods=['GET'])
 def get_original_link(short):
     return jsonify(
-        {'url': URLMap.validation_for_404(short)}), HTTPStatus.OK
+        {'url': URLMap.verify_record_for_404(short)}), HTTPStatus.OK
 
 
 @app.route('/api/id/', methods=['POST'])

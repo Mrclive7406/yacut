@@ -3,14 +3,14 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, URLField
 from wtforms.validators import URL, DataRequired, Length, Optional, Regexp
 
-from settings import CUSTOM_REGEXP, MAX_URL_LENGTH, MAX_CUSTOM_ID_LENGTH
+from settings import SHORT_REGEXP, MAX_URL_LENGTH, MAX_SHORT_LENGTH
 
 LONG_LINK = 'Длинная ссылка'
 REQUIRED_FIELD = 'Обязательное поле'
-ORIGINAL_LENGTH_MESSAGE = 'Длинна поля от 1 до {MAX_ORIGINAL_LINK_LENGHT}'
+ORIGINAL_LENGTH_MESSAGE = 'Длинна поля от 1 до {MAX_URL_LENGTH}'
 INVALID_LINK = 'Некорректная ссылка'
-SHORT_LINK_OPTION = 'Ваш вариант короткой ссылки'
-CUSTOM_LENGTH_MESSAGE = 'Длинна поля от 1 до 16 символов'
+SHORT = 'Ваш вариант короткой ссылки'
+SHORT_LENGTH_MESSAGE = 'Длинна поля от 1 до 16 символов'
 REGEXP_MESSAGE = 'Указано недопустимое имя для короткой ссылки'
 SUBMIT = 'Создать'
 
@@ -21,13 +21,13 @@ class UrlForm(FlaskForm):
         Length(max=MAX_URL_LENGTH, message=ORIGINAL_LENGTH_MESSAGE),
         URL(message=INVALID_LINK)])
     custom_id = StringField(
-        SHORT_LINK_OPTION,
+        SHORT,
         validators=[
-            Length(max=MAX_CUSTOM_ID_LENGTH,
-                   message=CUSTOM_LENGTH_MESSAGE),
+            Length(max=MAX_SHORT_LENGTH,
+                   message=SHORT_LENGTH_MESSAGE),
             Optional(),
             Regexp(
-                CUSTOM_REGEXP,
+                SHORT_REGEXP,
                 message=REGEXP_MESSAGE)
         ])
     submit = SubmitField(SUBMIT)

@@ -1,14 +1,14 @@
 import os
 import re
-from string import ascii_letters, digits
+import string
 
 MAX_URL_TRIES = 5
-MAX_CUSTOM_ID_LENGTH = 16
+MAX_SHORT_LENGTH = 16
 MAX_URL_LENGTH = 2048
-MAX_GENERATED_ID_LENGTH = 6
-CUSTOM_REGEXP = r'^[a-zA-Z\d]{1,16}$'
-CUSTOM_ID_REGEXP_COMPILED = re.compile(CUSTOM_REGEXP)
-ALPHANUMERIC_CHARACTERS = ascii_letters + digits
+MAX_GENERATED_SHORT_LENGTH = 6
+SHORT_REGEXP = r'^[a-zA-Z\d]{1,16}$'
+CUSTOM_ID_REGEXP_COMPILED = re.compile(SHORT_REGEXP)
+ALPHANUMERIC_CHARACTERS = string.ascii_letters + string.digits
 GET_SHORT_URL_ENDPOINT_NAME = 'get_short_url'
 
 
