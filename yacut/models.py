@@ -62,6 +62,8 @@ class URLMap(db.Model):
         if custom_id == '' or custom_id is None:
             custom_id = URLMap.get_unique_short_id()
             data['custom_id'] = custom_id
+        if len(custom_id) > MAX_SHORT_LENGTH:
+            raise ValidationError(INVALID_NAME, HTTPStatus.BAD_REQUEST)
         if not re.match(SHORT_REGEXP, custom_id):
             raise ValidationError(INVALID_NAME, HTTPStatus.BAD_REQUEST)
         if not URLMap.check_short_id(custom_id):
