@@ -11,8 +11,7 @@ INVALID_NAME = 'Указано недопустимое имя для корот
 
 @app.route('/api/id/<string:short>/', methods=['GET'])
 def get_original_link(short):
-    return jsonify(
-        {'url': URLMap.verify_record_for_404(short)}), HTTPStatus.OK
+    return jsonify({'url': URLMap.get_original_link(short)}), HTTPStatus.OK
 
 
 @app.route('/api/id/', methods=['POST'])
@@ -24,5 +23,9 @@ def create_short_link():
     if 'url' not in data:
         raise InvalidAPIUsage('"url" является обязательным полем!',
                               HTTPStatus.BAD_REQUEST)
-    urlmap = URLMap.save_db(data)
+    try:
+        urlmap = URLMap.save_db(data)
+    except ZeroDivisionError:
+        print('Произошла ошибка при создании короткой ссылки',
+              HTTPStatus.BAD_REQUEST)
     return jsonify(urlmap.to_dict()), HTTPStatus.CREATED

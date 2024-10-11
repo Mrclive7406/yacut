@@ -5,6 +5,7 @@ from http import HTTPStatus
 
 from flask import url_for
 
+from .exeptions import ValidationError
 from settings import (ALPHANUMERIC_CHARACTERS, SHORT_REGEXP,
                       GET_SHORT_URL_ENDPOINT_NAME, MAX_SHORT_LENGTH,
                       MAX_GENERATED_SHORT_LENGTH, MAX_URL_LENGTH,
@@ -28,7 +29,7 @@ class URLMap(db.Model):
         return {
             'url': self.original,
             'short_link': url_for(GET_SHORT_URL_ENDPOINT_NAME,
-                                  url_short=self.short,
+                                  short=self.short,
                                   _external=True)
         }
 
@@ -62,7 +63,7 @@ class URLMap(db.Model):
             custom_id = URLMap.get_unique_short_id()
             data['custom_id'] = custom_id
         if not re.match(SHORT_REGEXP, custom_id):
-            raise InvalidAPIUsage(INVALID_NAME, HTTPStatus.BAD_REQUEST)
+            raise ValidationError(INVALID_NAME, HTTPStatus.BAD_REQUEST)
         if not URLMap.check_short_id(custom_id):
             raise InvalidAPIUsage(LINK_EXICTS, HTTPStatus.BAD_REQUEST)
         urlmap = URLMap(original=data['url'], short=custom_id)
@@ -73,9 +74,14 @@ class URLMap(db.Model):
     @staticmethod
     def verify_record_for_404(short):
         url = URLMap.unique_short_id(short)
-        if not url:
+        if url is None:
             raise InvalidAPIUsage('Указанный id не найден',
                                   HTTPStatus.NOT_FOUND)
+        return url
+
+    @staticmethod
+    def get_original_link(short):
+        url = URLMap.verify_record_for_404(short)
         return url.original
 
     @staticmethod

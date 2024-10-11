@@ -7,7 +7,7 @@ from settings import SHORT_REGEXP, MAX_URL_LENGTH, MAX_SHORT_LENGTH
 
 LONG_LINK = 'Длинная ссылка'
 REQUIRED_FIELD = 'Обязательное поле'
-ORIGINAL_LENGTH_MESSAGE = 'Длинна поля от 1 до {MAX_URL_LENGTH}'
+ORIGINAL_LENGTH_MESSAGE = 'Длинна поля от 1 до {}'.format(MAX_URL_LENGTH)
 INVALID_LINK = 'Некорректная ссылка'
 SHORT = 'Ваш вариант короткой ссылки'
 SHORT_LENGTH_MESSAGE = 'Длинна поля от 1 до 16 символов'
