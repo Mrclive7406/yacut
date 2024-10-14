@@ -1,10 +1,12 @@
+from http import HTTPStatus
+
 from flask import flash, redirect, render_template, url_for
 
-from http import HTTPStatus
+from settings import GET_SHORT_URL_ENDPOINT_NAME
+
 from . import app
 from .forms import UrlForm
 from .models import URLMap
-from settings import GET_SHORT_URL_ENDPOINT_NAME
 
 
 @app.route('/', methods=['GET', 'POST'])

@@ -1,5 +1,5 @@
-from http import HTTPStatus
 from collections import namedtuple
+from http import HTTPStatus
 
 from flask import jsonify, request
 

@@ -1,13 +1,12 @@
 import random
-from re import search
 from datetime import datetime
+from re import search
 
 from flask import url_for
 
-from settings import (ALPHANUMERIC_CHARACTERS, SHORT_REGEXP,
-                      GET_SHORT_URL_ENDPOINT_NAME, MAX_SHORT_LENGTH,
-                      MAX_GENERATED_SHORT_LENGTH, MAX_URL_LENGTH,
-                      MAX_URL_TRIES)
+from settings import (ALPHANUMERIC_CHARACTERS, GET_SHORT_URL_ENDPOINT_NAME,
+                      MAX_GENERATED_SHORT_LENGTH, MAX_SHORT_LENGTH,
+                      MAX_URL_LENGTH, MAX_URL_TRIES, SHORT_REGEXP)
 from yacut import db
 
 ERROR_GENERATION = 'Не удалось сгенерировать уникальный уникальный'

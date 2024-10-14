@@ -3,8 +3,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, URLField
 from wtforms.validators import URL, DataRequired, Length, Optional, Regexp
 
-from settings import (SHORT_REGEXP, MAX_URL_LENGTH,
-                      MAX_SHORT_LENGTH)
+from settings import MAX_SHORT_LENGTH, MAX_URL_LENGTH, SHORT_REGEXP
 
 LONG_LINK = 'Длинная ссылка'
 REQUIRED_FIELD = 'Обязательное поле'
