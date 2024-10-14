@@ -42,10 +42,15 @@
         </div>
         <div class="col-sm">
           <p class="text-center">
-            {% with messages = get_flashed_messages(category_filter=['error']) %}
-                {% for message in messages %}
-                  {{ message }}
+
+            {% with messages = get_flashed_messages(with_categories=True) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
                 {% endfor %}
+                {% endif %}
             {% endwith %}
            
             {% if short_url %}

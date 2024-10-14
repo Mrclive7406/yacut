@@ -3,14 +3,15 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, URLField
 from wtforms.validators import URL, DataRequired, Length, Optional, Regexp
 
-from settings import SHORT_REGEXP, MAX_URL_LENGTH, MAX_SHORT_LENGTH
+from settings import (SHORT_REGEXP, MAX_URL_LENGTH,
+                      MAX_SHORT_LENGTH)
 
 LONG_LINK = 'Длинная ссылка'
 REQUIRED_FIELD = 'Обязательное поле'
-ORIGINAL_LENGTH_MESSAGE = 'Длинна поля от 1 до {}'.format(MAX_URL_LENGTH)
+ORIGINAL_LENGTH_MESSAGE = f'Длинна поля от 1 до {MAX_URL_LENGTH}'
 INVALID_LINK = 'Некорректная ссылка'
 SHORT = 'Ваш вариант короткой ссылки'
-SHORT_LENGTH_MESSAGE = 'Длинна поля от 1 до 16 символов'
+SHORT_LENGTH_MESSAGE = f'Длинна поля от 1 до {MAX_SHORT_LENGTH} символов'
 REGEXP_MESSAGE = 'Указано недопустимое имя для короткой ссылки'
 SUBMIT = 'Создать'
 
