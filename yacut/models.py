@@ -9,14 +9,14 @@ from settings import (ALPHANUMERIC_CHARACTERS, GET_SHORT_URL_ENDPOINT_NAME,
                       MAX_URL_LENGTH, SHORT_REGEXP)
 from yacut import db
 
-from .exceptions import MaxAttemptsExceededError
 
 ERROR_GENERATION = 'Не удалось сгенерировать уникальный уникальный ID'
 INVALID_NAME = 'Указано недопустимое имя для короткой ссылки'
 LINK_EXISTS = 'Предложенный вариант короткой ссылки уже существует.'
-INVALID_ORIGINAL_LINK_LENGTH = ('Ссылка не может быть длинной больше чем'
-                                f' {MAX_URL_LENGTH} символов, ваша длинна:'
-                                ' {} символов')
+
+
+class MaxAttemptsExceededError(Exception):
+    """Исключение, превышение максимального числа попыток"""
 
 
 class URLMap(db.Model):
@@ -59,21 +59,13 @@ class URLMap(db.Model):
         return URLMap.get(short=short) is None
 
     @staticmethod
-    def create_entry(original, short=None):
-        if not short:
-            short = URLMap.get_unique_short_id()
-        if short:
-            if len(short) > MAX_GENERATED_SHORT_LENGTH:
-                raise ValueError(INVALID_NAME)
-            if not search(SHORT_REGEXP, short):
-                raise ValueError(INVALID_NAME)
-            if URLMap.get(short):
-                raise ValueError(LINK_EXISTS)
-        if len(original) > MAX_URL_LENGTH:
-            raise ValueError(
-                INVALID_ORIGINAL_LINK_LENGTH.format(
-                    len(original), MAX_URL_LENGTH))
-        urlmap = URLMap(original=original, short=short)
-        db.session.add(urlmap)
+    def create(original, short=None):
+        short = short or URLMap.get_unique_short_id()
+        if not search(SHORT_REGEXP, short):
+            raise ValueError(INVALID_NAME)
+        if URLMap.get(short):
+            raise ValueError(LINK_EXISTS)
+        url_map = URLMap(original=original, short=short)
+        db.session.add(url_map)
         db.session.commit()
-        return urlmap
+        return url_map
