@@ -4,11 +4,12 @@ from re import search
 
 from flask import url_for
 
-from .exceptions import MaxAttemptsExceededError
 from settings import (ALPHANUMERIC_CHARACTERS, GET_SHORT_URL_ENDPOINT_NAME,
-                      MAX_GENERATED_SHORT_LENGTH, MAX_SHORT_LENGTH,
-                      MAX_URL_LENGTH, MAX_TRIES, SHORT_REGEXP)
+                      MAX_GENERATED_SHORT_LENGTH, MAX_SHORT_LENGTH, MAX_TRIES,
+                      MAX_URL_LENGTH, SHORT_REGEXP)
 from yacut import db
+
+from .exceptions import MaxAttemptsExceededError
 
 ERROR_GENERATION = 'Не удалось сгенерировать уникальный уникальный ID'
 INVALID_NAME = 'Указано недопустимое имя для короткой ссылки'
