@@ -1,8 +1,6 @@
 from http import HTTPStatus
 
-from flask import flash, redirect, render_template, url_for
-
-from settings import GET_SHORT_URL_ENDPOINT_NAME
+from flask import flash, redirect, render_template
 
 from . import app
 from .forms import UrlForm
@@ -15,19 +13,15 @@ def index_view():
     if not form.validate_on_submit():
         return render_template('index.html', form=form)
     try:
-        url_map = URLMap.create_entry(
-            form.original_link.data,
-            form.custom_id.data or None
-        )
+        return render_template(
+            'index.html',
+            form=form,
+            short_url=URLMap.create_entry(
+                form.original_link.data,
+                form.custom_id.data or None).get_short_url())
     except ValueError as error:
         flash(str(error), HTTPStatus.BAD_REQUEST)
         return render_template('index.html', form=form)
-    return render_template('index.html',
-                           form=form,
-                           short_url=url_for(
-                               GET_SHORT_URL_ENDPOINT_NAME,
-                               short=url_map.short,
-                               _external=True))
 
 
 @app.route('/<string:short>')

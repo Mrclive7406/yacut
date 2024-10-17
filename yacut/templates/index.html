@@ -42,16 +42,13 @@
         </div>
         <div class="col-sm">
           <p class="text-center">
-
-            {% with messages = get_flashed_messages(with_categories=True) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-                {% endif %}
-            {% endwith %}
+            {% with messages = get_flashed_messages() %} 
+                {% for message in messages %} 
+                    <div class="alert"> 
+                        {{ message }} 
+                    </div> 
+                {% endfor %} 
+            {% endwith %} 
            
             {% if short_url %}
               Ваша новая ссылка готова: <a href="{{ short_url }}">{{ short_url }}</a>

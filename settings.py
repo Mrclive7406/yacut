@@ -2,7 +2,7 @@ import os
 import re
 import string
 
-MAX_URL_TRIES = 10
+MAX_TRIES = 10
 MAX_SHORT_LENGTH = 16
 MAX_URL_LENGTH = 2048
 MAX_GENERATED_SHORT_LENGTH = 6

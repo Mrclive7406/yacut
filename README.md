@@ -48,7 +48,7 @@ SECRET_KEY=[ваш случайный ключ]
 
 Создать базу данных
 ```
-$ flask db upgrade
+flask db upgrade
 ```
 
 Запуск:
@@ -58,11 +58,23 @@ flask run
 ```
 
 Перейдите по url-адресу:
-```
-[Генерация коротких ссылок](http://127.0.0.1:5000/)
-```
+
+- [Генерация коротких ссылок](http://127.0.0.1:5000/)
+
 
 ## Автор 
 - [Колесников Павел ](https://github.com/Mrclive7406)
 # GitHub 
 - [Проект парсинга pep и документации Python](https://github.com/Mrclive7406/yacut)
+
+
+
+- [Flask Api](https://flask-api.readthedocs.io/en/latest/)
+
+
+## Технологии
+- Python 3.11
+- Flask 2.0.2
+- SQLAlchemy 1.4.29
+- Alembic 1.7.5
+- WTForms 3.0.1
